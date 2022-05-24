@@ -1,25 +1,32 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from 'react';
+import { Spinner } from 'react-bootstrap';
+import { useDispatch } from 'react-redux';
+import {BrowserRouter} from 'react-router-dom';
+import AppRouter from './components/AppRouter';
+import NavBar from './components/Navbar';
+import { check } from './http/userAPI';
 
-function App() {
+const App = () => {
+
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(()=> {
+    check().then(data => {
+      dispatch({type: 'authUser', payload: data})
+    }).finally(()=>setLoading(false));
+  }, [])
+
+  if(loading){
+    return <Spinner animation={'grow'} className='d-flex align-items-center justify-content-center'/>
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <NavBar/>
+      <AppRouter/>
+    </BrowserRouter>
   );
-}
+};
 
 export default App;
